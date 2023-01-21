@@ -89,6 +89,11 @@ public class JdbcOwnerRepositoryImpl implements OwnerRepository {
         return owners;
     }
 
+    @Override
+    public Collection<Owner> findByAge(Integer age) throws DataAccessException {
+        return null;
+    }
+
     /**
      * Loads the {@link Owner} with the supplied <code>id</code>; also loads the {@link Pet Pets} and {@link Visit Visits}
      * for the corresponding owner, if not already loaded.
@@ -157,40 +162,40 @@ public class JdbcOwnerRepositoryImpl implements OwnerRepository {
             loadPetsAndVisits(owner);
         }
     }
-    
-	@Override
-	public Collection<Owner> findAll() throws DataAccessException {
-		List<Owner> owners = this.namedParameterJdbcTemplate.query(
-	            "SELECT id, first_name, last_name, address, city, telephone FROM owners",
-	            new HashMap<String, Object>(),
-	            BeanPropertyRowMapper.newInstance(Owner.class));
-		for (Owner owner : owners) {
+
+    @Override
+    public Collection<Owner> findAll() throws DataAccessException {
+        List<Owner> owners = this.namedParameterJdbcTemplate.query(
+            "SELECT id, first_name, last_name, address, city, telephone FROM owners",
+            new HashMap<String, Object>(),
+            BeanPropertyRowMapper.newInstance(Owner.class));
+        for (Owner owner : owners) {
             loadPetsAndVisits(owner);
         }
-	    return owners;
-	}
+        return owners;
+    }
 
-	@Override
-	@Transactional
-	public void delete(Owner owner) throws DataAccessException {
-		Map<String, Object> owner_params = new HashMap<>();
-		owner_params.put("id", owner.getId());
+    @Override
+    @Transactional
+    public void delete(Owner owner) throws DataAccessException {
+        Map<String, Object> owner_params = new HashMap<>();
+        owner_params.put("id", owner.getId());
         List<Pet> pets = owner.getPets();
         // cascade delete pets
         for (Pet pet : pets){
-        	Map<String, Object> pet_params = new HashMap<>();
-        	pet_params.put("id", pet.getId());
-        	// cascade delete visits
-        	List<Visit> visits = pet.getVisits();
+            Map<String, Object> pet_params = new HashMap<>();
+            pet_params.put("id", pet.getId());
+            // cascade delete visits
+            List<Visit> visits = pet.getVisits();
             for (Visit visit : visits){
-            	Map<String, Object> visit_params = new HashMap<>();
-            	visit_params.put("id", visit.getId());
-            	this.namedParameterJdbcTemplate.update("DELETE FROM visits WHERE id=:id", visit_params);
+                Map<String, Object> visit_params = new HashMap<>();
+                visit_params.put("id", visit.getId());
+                this.namedParameterJdbcTemplate.update("DELETE FROM visits WHERE id=:id", visit_params);
             }
             this.namedParameterJdbcTemplate.update("DELETE FROM pets WHERE id=:id", pet_params);
         }
         this.namedParameterJdbcTemplate.update("DELETE FROM owners WHERE id=:id", owner_params);
-	}
+    }
 
 
 }

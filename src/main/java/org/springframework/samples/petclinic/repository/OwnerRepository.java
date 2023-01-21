@@ -31,7 +31,7 @@ import org.springframework.samples.petclinic.model.Owner;
  * @author Michael Isvy
  * @author Vitaliy Fedoriv
  */
-public interface OwnerRepository {
+public interface  OwnerRepository {
 
     /**
      * Retrieve <code>Owner</code>s from the data store by last name, returning all owners whose last name <i>starts</i>
@@ -42,6 +42,8 @@ public interface OwnerRepository {
      * found)
      */
     Collection<Owner> findByLastName(String lastName) throws DataAccessException;
+
+    Collection<Owner> findByAge(Integer age) throws DataAccessException;
 
     /**
      * Retrieve an <code>Owner</code> from the data store by id.
@@ -60,22 +62,22 @@ public interface OwnerRepository {
      * @see BaseEntity#isNew
      */
     void save(Owner owner) throws DataAccessException;
-    
+
     /**
-     * Retrieve <code>Owner</code>s from the data store, returning all owners 
+     * Retrieve <code>Owner</code>s from the data store, returning all owners
      *
      * @return a <code>Collection</code> of <code>Owner</code>s (or an empty <code>Collection</code> if none
      * found)
      */
-	Collection<Owner> findAll() throws DataAccessException;
-	
+    Collection<Owner> findAll() throws DataAccessException;
+
     /**
      * Delete an <code>Owner</code> to the data store by <code>Owner</code>.
      *
      * @param owner the <code>Owner</code> to delete
-     * 
+     *
      */
-	void delete(Owner owner) throws DataAccessException;
+    void delete(Owner owner) throws DataAccessException;
 
 
 }

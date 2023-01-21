@@ -80,6 +80,22 @@ public class OwnerRestController implements OwnersApi {
         return new ResponseEntity<>(ownerMapper.toOwnerDtoCollection(owners), HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<List<OwnerDto>> getOwnerByAge(Integer age){
+        Collection<Owner> owners;
+        if(age!= null){
+            owners=this.clinicService.findOwnerByAge(age);
+        }else{
+            owners =this.clinicService.findAllOwners();
+        }
+        if(owners.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        List<OwnerDto> ownerDtos =ownerMapper.toOwnerDtoCollection(owners);
+        return new ResponseEntity<>(ownerDtos,HttpStatus.OK);
+    }
+
     @PreAuthorize("hasRole(@roles.OWNER_ADMIN)")
     @Override
     public ResponseEntity<OwnerDto> getOwner(Integer ownerId) {
@@ -87,7 +103,10 @@ public class OwnerRestController implements OwnersApi {
         if (owner == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(ownerMapper.toOwnerDto(owner), HttpStatus.OK);
+
+        OwnerDto ownerDto=  ownerMapper.toOwnerDto(owner);
+        ownerDto.setFullName(owner.getFirstName()+" "+owner.getLastName());
+        return new ResponseEntity<>(ownerDto, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole(@roles.OWNER_ADMIN)")
